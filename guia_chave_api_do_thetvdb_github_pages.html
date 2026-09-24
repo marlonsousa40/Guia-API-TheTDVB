@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chave da API do TheTVDB - Guia Passo a Passo</title>
+    <style>
+        :root {
+            --bg-color: #0d0e11;
+            --card-bg: #16171d;
+            --accent-purple: #c084fc;
+            --purple-bg: #1e142e;
+            --purple-border: #4c1d95;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --link-color: #38bdf8;
+            --step-number-bg: #27272a;
+            --line-color: #27272a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 760px;
+            width: 100%;
+        }
+
+        h1.main-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        p.intro {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 24px;
+        }
+
+        .callout {
+            background-color: var(--purple-bg);
+            border: 1px solid var(--purple-border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 32px;
+        }
+
+        .callout-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-bottom: 6px;
+        }
+
+        .callout-body {
+            font-size: 0.95rem;
+            color: #e9d5ff;
+        }
+
+        .steps-wrapper {
+            position: relative;
+            padding-left: 44px;
+        }
+
+        .step-item {
+            position: relative;
+            margin-bottom: 32px;
+        }
+
+        /* Vertical connecting line */
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 28px;
+            bottom: -36px;
+            width: 2px;
+            background-color: var(--line-color);
+        }
+
+        .step-item:last-child::before {
+            display: none;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: -44px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--step-number-bg);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .step-content {
+            font-size: 0.98rem;
+            color: #d1d5db;
+        }
+
+        .step-content p {
+            margin-bottom: 10px;
+        }
+
+        .step-content ol {
+            margin: 10px 0 12px 20px;
+        }
+
+        .step-content li {
+            margin-bottom: 8px;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        code {
+            background-color: #27272a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #f4f4f5;
+        }
+
+        .data-box {
+            background-color: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .data-box div {
+            margin-bottom: 4px;
+        }
+
+        .data-box span {
+            color: var(--text-secondary);
+        }
+
+        .success-box {
+            background-color: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-top: 16px;
+        }
+
+        .success-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #34d399;
+            margin-bottom: 6px;
+        }
+
+        .success-body {
+            color: #a7f3d0;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 24px 16px;
+            }
+            .steps-wrapper {
+                padding-left: 36px;
+            }
+            .step-number {
+                left: -36px;
+                width: 26px;
+                height: 26px;
+                font-size: 0.85rem;
+            }
+            .step-item::before {
+                left: -24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="main-title">Chave da API do TheTVDB</h1>
+        <p class="intro">
+            Siga este guia rápido para criar API TheTVDB. Você precisará de uma chave de API para permitir que os aplicativos extraiam metadados do TheTVDB.
+        </p>
+
+        <div class="callout">
+            <div class="callout-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span>Guia de cadastro do e-mail</span>
+            </div>
+            <div class="callout-body">
+                Você pode utilizar um e-mail temporário gerado ou o seu próprio e-mail pessoal para este cadastro.
+            </div>
+        </div>
+
+        <div class="steps-wrapper">
+
+            <!-- Step 1 -->
+            <div class="step-item">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2 class="step-title">Gerar um e-mail temporário (Opcional)</h2>
+                </div>
+                <div class="step-content">
+                    <p>
+                        Clique <a href="https://temp-mail.org/en/" target="_blank">aqui ↗</a> para gerar um endereço de e-mail temporário. Ele será necessário apenas para o cadastro. <strong>Mantenha esta página aberta</strong>.
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <em>Ou você pode utilizar o seu próprio e-mail pessoal.</em>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-item">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2 class="step-title">Criar uma conta</h2>
+                </div>
+                <div class="step-content">
+                    <p><strong>Crie sua conta</strong></p>
+                    <ol>
+                        <li>Clique <a href="https://www.thetvdb.com/auth/register" target="_blank">aqui ↗</a> para abrir a página de cadastro da conta TheTVDB.</li>
+                        <li>Insira um nome de usuário e uma senha, seguidos pelo e-mail temporário gerado na etapa anterior (ou seu próprio e-mail). Em seguida, clique em <strong>"Register"</strong>.</li>
+                        <li>Vá ao site do e-mail gerado ou na caixa de entrada do seu e-mail próprio, abra a mensagem do TheTVDB e clique no link de verificação para confirmar sua conta.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-item">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2 class="step-title">Criar sua chave de API</h2>
+                </div>
+                <div class="step-content">
+                    <ol>
+                        <li>Clique <a href="https://www.thetvdb.com/api-information" target="_blank">aqui ↗</a> para abrir a página da API do TheTVDB.</li>
+                        <li>Clique no botão <strong>"Get Started"</strong>.</li>
+                        <li>Preencha os dados do formulário:
+                            <div class="data-box">
+                                <div><span>Company or Project Name:</span> Stremio Streaming</div>
+                                <div><span>Project Description:</span> Quero transmitir conteúdo com metadados do TheTVDB</div>
+                            </div>
+                        </li>
+                        <li>Clique no botão <strong>"Submit"</strong>.</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <div class="success-title">Parabéns! 🎉</div>
+                        <div class="success-body">
+                            Sua conta TheTVDB foi criada e a chave de API gerada!<br>
+                            Para acessar sua chave de API a qualquer momento no futuro, visite <a href="https://www.thetvdb.com/dashboard/account/apikey" target="_blank">thetvdb.com/dashboard/account/apikey</a>.<br><br>
+                            <strong>Agora é só copiar a chave e ser feliz.</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
